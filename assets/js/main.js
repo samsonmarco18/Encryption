@@ -5,14 +5,29 @@
 
 // Show Alert Message
 function showAlert(message, type = 'success') {
+    if (window.__alertTimeout) {
+        clearTimeout(window.__alertTimeout);
+    }
+
     const alertDiv = document.createElement('div');
     alertDiv.className = `alert alert-${type} fade-in`;
     alertDiv.textContent = message;
     
-    const container = document.querySelector('.login-body') || document.querySelector('.dashboard-container') || document.body;
-    container.insertBefore(alertDiv, container.firstChild);
+    const alertContainer = document.getElementById('alertContainer');
+    const container = alertContainer || document.querySelector('.login-body') || document.querySelector('.dashboard-container') || document.body;
+
+    const existingAlert = container.querySelector('.alert');
+    if (existingAlert) {
+        existingAlert.remove();
+    }
+
+    if (alertContainer) {
+        alertContainer.appendChild(alertDiv);
+    } else {
+        container.insertBefore(alertDiv, container.firstChild);
+    }
     
-    setTimeout(() => {
+    window.__alertTimeout = setTimeout(() => {
         alertDiv.remove();
     }, 5000);
 }
@@ -313,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Register form
-    const registerForm = document.getElementById('registerForm');
+    const registerForm = document.getElementById('signupForm');
     if (registerForm) {
         registerForm.addEventListener('submit', handleRegister);
     }
